@@ -1,4 +1,6 @@
-C361A1
+Changes to Read Me
 ======
 
 C361 - Assignment 1
+
+Send basic information via network.
