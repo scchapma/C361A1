@@ -1,0 +1,170 @@
+<html>
+<head></head>
+<body>
+
+<h2>class <tt>Physical_layer_exception</tt></h2>
+
+<dl>
+<dt>Class purpose<dd>
+Provide an exception class for the <tt>Corrupt</tt>,
+<tt>Physical_layer_interface</tt>, and <tt>Physical_layer_emulator</tt> classes.
+<dt>Prototype<dd>
+<tt>class <b>Physical_layer_exception</b>: public exception { };</tt>
+</dl>
+<hr>
+
+<h2>class <tt>Corrupt</tt></h2>
+<dl>
+<dt>Class constants<dd>
+<tt>enum {MAXIMUM_LENGTH = 50};</tt>
+<dt>Class purpose<dd>
+Implements byte corruption for use by a <tt>Physical_layer_interface</tt>.
+<p>
+The <tt>corrupt</tt> array specifies the corruption behaviour for
+bytes passed to <tt>Physical_layer_interface::send()</tt>.
+<p>
+Corruption is applied cyclically.
+If <tt>corrupt_length</tt> is 0, then no corruption is performed.
+Otherwise, <tt>corrupt[<i>i</i>%corrupt_length]</tt>
+specifies the probability that the <tt><i>i</tt></i>'th
+byte accepted  by <tt>send</tt> will be corrupted.
+If a byte is selected for corruption,
+the least significant bit in that byte will be inverted.
+</dl>
+<hr>
+
+<dl>
+<dt>Normal Case<dd>
+Make an internal copy of the <tt>corrupt</tt> values.
+<dt>Exceptions<dd>
+throw <tt>Physical_layer_exception</tt> if
+<tt>corrupt_length</tt> > <tt>MAXIMUM_LENGTH</tt>
+<p>
+throw <tt>Physical_layer_exception</tt>
+if any value in <tt>corrupt[0..corrupt_length-1]</tt> is not in [0.0..1.0]
+<dt>Preconditions<dd>
+all elements in <tt>corrupt[0..corrupt_length-1]</tt> are addressable
+<dt>Prototype<dd>
+<tt>
+<b>Corrupt(</b>double corrupt[], unsigned int corrupt_length);
+</tt>
+</dl>
+<hr>
+
+
+<h2>class <tt>Physical_layer_interface</tt></h2>
+<dl>
+<dt>Class purpose<dd>
+Provide a send/receive interface to a <tt>Physical_layer_emulator</tt> object.
+</dl>
+<hr>
+
+<dl>
+<dt>Normal Case<dd>
+Make internal copies of the <tt>Physical_layer_emulator</tt> address and the
+<tt>Corrupt</tt> object contents.
+<dt>Exceptions<dd>
+None.
+<dt>Preconditions<dd>
+*physical_layer_emulator_p is a <tt>Physical_layer_emulator</tt> object.
+<dt>Prototype<dd>
+<tt><b>Physical_layer_interface</b>(Physical_layer_emulator
+*physical_layer_emulator_p, Corrupt &corrupt)</tt>
+</dl>
+<hr>
+
+<dl>
+<dt>Normal Case<dd>
+return true if the interface is ready to accept a byte
+<dt>Exceptions<dd>
+None
+<dt>Prototype<dd>
+<tt>int <b>send_ready</b>();</tt>
+</dl>
+<hr>
+
+<dl>
+<dt>Normal Case<dd>
+Send <tt>byte</tt> to the other interface,
+subject to the byte corruption array passed to the constructor.
+<dt>Exceptions<dd>
+throw <tt>Physical_layer_exception</tt> if <tt>send_ready</tt> returns false.
+<dt>Preconditions<dd>
+None.
+<dt>Prototype<dd>
+<tt>void <b>send</b>(unsigned char byte);</tt>
+</dl>
+<hr>
+
+<dl>
+<dt>Normal Case<dd>
+return true if the interface has a byte available.
+<dt>Exceptions<dd>
+None
+<dt>Prototype<dd>
+<tt>int <b>receive_ready</b>();</tt>
+</dl>
+<hr>
+
+<dl>
+<dt>Normal Case<dd>
+return the next available byte
+<dt>Exceptions<dd>
+throw <tt>Physical_layer_exception</tt> if <tt>receive_ready</tt> returns false.
+<dt>Preconditions<dd>
+None.
+<dt>Prototype<dd>
+<tt>unsigned char <b>receive</b>();</tt>
+</dl>
+
+<h2>class <tt>Physical_layer_emulator</tt></h2>
+<dl>
+<dt>Class constants<dd>
+None
+<dt>Class purpose<dd>
+Provide a Physical Layer emulator at rate <tt>bit_rate</tt> bits per second,
+supporting interfaces a and b and bi-directional corruption.
+</dl>
+<hr>
+
+<dl>
+<dt>Normal Case<dd>
+Make internal copies of <tt>a_corrupt</tt> and <tt>b_corrupt</tt>.
+<p>
+<dt>Exceptions<dd>
+None
+<dt>Preconditions<dd>
+None
+<dt>Prototype<dd>
+<tt>Physical_layer_emulator(unsigned int bit_rate,
+Corrupt &a_corrupt, Corrupt &b_corrupt);</tt>
+</dl>
+<hr>
+
+<dl>
+<dt>Normal Case<dd>
+return the address of the a interface.
+</rm></pre>
+<dt>Exceptions<dd>
+None
+<dt>Preconditions<dd>
+None
+<dt>Prototype<dd>
+<tt>Physical_layer_interface* get_a_interface();</tt>
+</dl>
+<hr>
+
+<dl>
+<dt>Normal Case<dd>
+return the address of the b interface.
+</rm></pre>
+<dt>Exceptions<dd>
+None
+<dt>Preconditions<dd>
+None
+<dt>Prototype<dd>
+<tt>Physical_layer_interface* get_b_interface();</tt>
+</dl>
+
+</body>
+</html>

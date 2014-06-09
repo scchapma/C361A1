@@ -1,0 +1,74 @@
+<html>
+<head></head>
+<body>
+
+<h2>Byte stuffing demo</h2>
+Your code should be able to pass the five tests shown below.
+<p>
+In addition, each time <tt>receive_byte</tt> receives a new
+data byte, a check is required to see if there is room for the data
+in <tt>receive_buffer</tt>.
+The lab instructor will examine your source code for this length check.
+
+<h2>Five tests</h2>
+Download the <a href="byte_stuffing_demo.zip">Demo code<a>.
+<pre>
+	unzip byte_stuffing_demo.zip
+</pre>
+To compile all five tests:
+<pre>
+	cd byte_stuffing_demo
+	bash make_all.sh
+</pre>
+
+Shown below are the inputs and correct outputs for each test.
+
+<dl>
+<dt>basic test: send 2 bytes<dd>
+	<ul>
+	<li>
+	link_layer send: {100, 101}
+	<li>
+	link_layer receive: {100, 101}
+	</ul>
+<dt>flag test: send a flag byte as data<dd>
+Byte stuffing needed for FLAG_BYTE in data.
+	<ul>
+	<li>
+	link_layer send: {100, FLAG_BYTE, 101}
+	<li>
+	link_layer receive: {100, FLAG_BYTE, 101}
+	</ul>
+
+<dt>escape test: send an escape byte as data<dd>
+Byte stuffing needed for ESCAPE_BYTE in data.
+	<ul>
+	<li>
+	link_layer send: {100, ESCAPE_BYTE, 101}
+	<li>
+	link_layer receive: {100, ESCAPE_BYTE, 101}
+	</ul>
+
+<dt>corrupted flag test: corrupts a data byte to a FLAG_BYTE<dd>
+Note: because a FLAG_BYTE has value 3, the value 2 is corrupted by
+the physical layer emulator to a FLAG_BYTE.
+	<ul>
+	<li>
+	link_layer send: {1, 2, 1}
+	<li>
+	link_layer receive: {1}
+	</ul>
+
+<dt>corrupted escape test: corrupts a data byte to an ESCAPE_BYTE<dd>
+Note: because a ESCAPE_BYTE has value 16, the value 17 is corrupted by
+the physical layer emulator to a ESCAPE_BYTE.
+	<ul>
+	<li>
+	link_layer send: {1, 17, 1}
+	<li>
+	link_layer receive: {}
+	</ul>
+</dl>
+
+</body>
+</html>
