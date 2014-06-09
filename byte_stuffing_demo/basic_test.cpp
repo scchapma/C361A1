@@ -27,7 +27,7 @@ void send_one(unsigned char *send_buffer, unsigned int length)
 	}
 
 	// send
-	cout << "main: LeBron sending: {";
+	cout << "main: sending: {";
 	for (unsigned int i = 0; i < length; i++) {
 		cout << (unsigned int)send_buffer[i] << ",";
 	}
