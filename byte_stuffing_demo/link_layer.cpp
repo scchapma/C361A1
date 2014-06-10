@@ -61,18 +61,16 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
 	unsigned int i;
 
 	send_buffer[0] = FLAG_BYTE; // start flag
-    /* add new code here for byte stuffing.
-        add ESC before FLAG or ESC*/
     int j = 1;
 	for (i = 0; i < length; i++) {
 		//if buffer[i] == ESC, then send_buffer [i+1] == ESC and send_buffer[i+2] == ESC
-        if(buffer[i] == ESC_BYTE){
-            send_buffer[j] = ESC_BYTE;
-            send_buffer[j+1] = ESC_BYTE;
+        if(buffer[i] == ESCAPE_BYTE){
+            send_buffer[j] = ESCAPE_BYTE;
+            send_buffer[j+1] = ESCAPE_BYTE;
             j += 2;
         //else if buffer[i] == ESC, then send_buffer [i+1] == ESC and send_buffer[i+2] == FLAG
         }else if (buffer[i] == FLAG_BYTE){
-            send_buffer[j] = ESC_BYTE;
+            send_buffer[j] = ESCAPE_BYTE;
             send_buffer[j+1] = FLAG_BYTE;
             j += 2;
         }else{
