@@ -158,12 +158,19 @@ void Link_layer::receive_byte(void)
 		if (b == FLAG_BYTE) { // end frame
 			receive_frame_state = OUT;
 			receive_buffer_ready = 1;
-		} else { // add b to receive_buffer
+		} else if (b == ESCAPE_BYTE){
+            receive_frame_state = ESCAPED;
+        } else { // add b to receive_buffer
 			receive_buffer[receive_buffer_length] = b;
 			receive_buffer_length++;
 		}
-	}
-
+	} else{ // receive_frame_state == ESCAPED
+        if (b == FLAG_BYTE || b == ESCAPE_BYTE){
+            receive_frame_state = IN;
+            receive_buffer[receive_buffer_length] = b;
+			receive_buffer_length++;
+        }  // else - return - not legal string
+    }
 	pthread_mutex_unlock(&receive_mutex);
 }
 

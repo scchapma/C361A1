@@ -52,7 +52,7 @@ void send_one(unsigned char *send_buffer, unsigned int length)
 
 int main(int argc, char* argv[])
 {
-	unsigned char buffer[] = {100, 17, 101};
+	unsigned char buffer[] = {100, Link_layer::ESCAPE_BYTE, 101};
 
 	send_one(buffer, sizeof(buffer));
 

@@ -83,5 +83,5 @@ private:
 	unsigned int receive_buffer_length;
 	unsigned int receive_buffer_ready;
 	unsigned int receive_frame_state;
-	enum {IN, OUT};
+	enum {IN, OUT, ESCAPED};
 };
