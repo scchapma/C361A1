@@ -63,18 +63,15 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
 	send_buffer[0] = FLAG_BYTE; // start flag
     int j = 1;
 	for (i = 0; i < length; i++) {
-		//if buffer[i] == ESC, then send_buffer [i+1] == ESC and send_buffer[i+2] == ESC
         if(buffer[i] == ESCAPE_BYTE){
             send_buffer[j] = ESCAPE_BYTE;
             send_buffer[j+1] = ESCAPE_BYTE;
             j += 2;
-        //else if buffer[i] == ESC, then send_buffer [i+1] == ESC and send_buffer[i+2] == FLAG
         }else if (buffer[i] == FLAG_BYTE){
             send_buffer[j] = ESCAPE_BYTE;
             send_buffer[j+1] = FLAG_BYTE;
             j += 2;
         }else{
-            //check this - may be off by one
             send_buffer[j] = buffer[i];
             j++;
         }
@@ -174,8 +171,8 @@ void Link_layer::receive_byte(void)
             receive_frame_state = FAIL;
         }
     } else{  //non-legal string (receive_frame_state == FAIL
-        // buffer to null
-        memset(receive_buffer, 0x00, sizeof receive_buffer);
+        // buffer length to 0.
+        receive_buffer_length = 0;
         receive_buffer_ready = 1;
     }
 	pthread_mutex_unlock(&receive_mutex);
