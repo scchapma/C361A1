@@ -145,6 +145,12 @@ void Link_layer::receive_byte(void)
 	}
 
 	unsigned char b = physical_layer_interface->receive();
+    
+    //check to ensure there is room for new byte in receive_buffer
+    if(receive_buffer_length == 100){
+		pthread_mutex_unlock(&receive_mutex);
+		return;
+	}
 
 	if (receive_frame_state == OUT) {
 		if (b == FLAG_BYTE) { // start frame
