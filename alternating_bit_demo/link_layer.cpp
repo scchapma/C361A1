@@ -66,7 +66,7 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
     p.seq = 0;
     p.ack = 0;
     p.length = send_buffer_length;
-    cout << "p.length: " << (int)p.length << endl;
+    cout << "p.length: " << (unsigned int)p.length << endl;
     for(int i = 0; i < p.length; i++){
         p.data[i] = send_buffer[i];
         cout << "p.data: " << p.data[i] << endl;
@@ -84,7 +84,7 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
     send_buffer[4] = p.ack;
     send_buffer[5] = p.length;
     for(i = 0; i < PACKET_HEADER_LENGTH; i++){
-        cout << "output: " << (int)send_buffer[i+1] << endl;
+        cout << "output: " << (unsigned int)send_buffer[i+1] << endl;
     }
     
     int j = 1 + PACKET_HEADER_LENGTH;
@@ -159,6 +159,7 @@ unsigned int Link_layer::receive(unsigned char buffer[])
 	unsigned int n = receive_buffer_length;
 	for (unsigned int i = 0; i < n; i++) {
 		buffer[i] = receive_buffer[i];
+        cout << "receive_buffer[i]: " << (unsigned int) receive_buffer[i] << endl;
 	}
     
     //acknowledge receipt

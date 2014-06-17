@@ -60,37 +60,56 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
 
 	unsigned int i;
     struct packet p;
+    unsigned char header[PACKET_HEADER_LENGTH];
+    
+    // prepare packet
+    p.seq = 0;
+    p.ack = 0;
+    p.length = send_buffer_length;
+    cout << "p.length: " << (unsigned int)p.length << endl;
+    for(int i = 0; i < p.length; i++){
+        p.data[i] = send_buffer[i];
+        cout << "p.data: " << p.data[i] << endl;
+    }
+    p.checksum = checksum((unsigned short*) &p, PACKET_HEADER_LENGTH + p.length);
+    
+    cout << "checksum: " << p.checksum << endl;
+    
+    // add packet header - seq, ack, checksum
 
 	send_buffer[0] = FLAG_BYTE; // start flag
-    int j = 1;
+    send_buffer[1] = p.checksum & 0xff; // split checksum bitwise
+    send_buffer[2] = (p.checksum >> 8) & 0xff;
+    send_buffer[3] = p.seq;
+    send_buffer[4] = p.ack;
+    send_buffer[5] = p.length;
+    for(i = 0; i < PACKET_HEADER_LENGTH; i++){
+        cout << "output: " << (unsigned int)send_buffer[i+1] << endl;
+    }
+    
+    int j = 1 + PACKET_HEADER_LENGTH;
 	for (i = 0; i < length; i++) {
         if(buffer[i] == ESCAPE_BYTE){
             send_buffer[j] = ESCAPE_BYTE;
             send_buffer[j+1] = ESCAPE_BYTE;
+            cout << "output: " << send_buffer[j] << endl;
+            cout << "output: " << send_buffer[j+1] << endl;
             j += 2;
         }else if (buffer[i] == FLAG_BYTE){
             send_buffer[j] = ESCAPE_BYTE;
             send_buffer[j+1] = FLAG_BYTE;
+            cout << "output: " << send_buffer[j] << endl;
+            cout << "output: " << send_buffer[j+1] << endl;
             j += 2;
         }else{
             send_buffer[j] = buffer[i];
+            cout << "output: " << send_buffer[j] << endl;
             j++;
         }
 	}
 	send_buffer[j] = FLAG_BYTE; // end flag
 	send_buffer_length = j+1;
 	send_buffer_next = 0;
-    
-    // prepare packet
-    p.seq = 0;
-    p.ack = 1;
-    p.length = send_buffer_length;
-    for(int i = 0; int < p.length; i++){
-        p.data[i] = send_buffer[i];
-    }
-    p.checksum = checksum(&p, PACKET_HEADER_LENGTH + p.length);
-    
-    // add packet header - seq, ack, checksum
 
 	pthread_mutex_unlock(&send_mutex);
 }
@@ -140,7 +159,10 @@ unsigned int Link_layer::receive(unsigned char buffer[])
 	unsigned int n = receive_buffer_length;
 	for (unsigned int i = 0; i < n; i++) {
 		buffer[i] = receive_buffer[i];
+        cout << "receive_buffer[i]: " << (unsigned int)receive_buffer[i] << endl;
 	}
+    
+    //acknowledge receipt
 
 	pthread_mutex_unlock(&receive_mutex);
 
