@@ -155,10 +155,12 @@ int Link_layer::receive_ready(void)
 unsigned int Link_layer::receive(unsigned char buffer[])
 {
 	pthread_mutex_lock(&receive_mutex);
+    
+    //store values for packet header
 
-	unsigned int n = receive_buffer_length;
+	unsigned int n = receive_buffer_length - PACKET_HEADER_LENGTH;
 	for (unsigned int i = 0; i < n; i++) {
-		buffer[i] = receive_buffer[i];
+		buffer[i] = receive_buffer[i+PACKET_HEADER_LENGTH];
         cout << "receive_buffer[i]: " << (unsigned int)receive_buffer[i] << endl;
 	}
     
