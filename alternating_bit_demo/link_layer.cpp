@@ -110,7 +110,29 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
 	send_buffer[j] = FLAG_BYTE; // end flag
 	send_buffer_length = j+1;
 	send_buffer_next = 0;
+    
+    timeval t0, t1;
+    timeval timeout;
+    timeout.tv_sec = 3;
+    
+    //set time
+    gettimeofday(&t0, NULL);
 
+    
+    //if timeout, resend
+    // poll for ack from other link_layer
+    while(p.ack  != (receive_ack-1)/2){
+        cout << "in send - while loop" << endl;
+        // determine time difference
+        gettimeofday(&t1, NULL);
+        cout << "time difference: " << (t1-t0) << endl;
+        if((t1-t0) >= timeout){
+            resend();
+            gettimeofday(&t0, NULL);
+        }else{
+            gettimeofday(&t1, NULL);
+        }
+    }
 	pthread_mutex_unlock(&send_mutex);
 }
 
@@ -161,7 +183,7 @@ unsigned int Link_layer::receive(unsigned char buffer[])
 	unsigned int n = receive_buffer_length - PACKET_HEADER_LENGTH;
 	for (unsigned int i = 0; i < n; i++) {
 		buffer[i] = receive_buffer[i+PACKET_HEADER_LENGTH];
-        cout << "receive_buffer[i]: " << (unsigned int) receive_buffer[i] << endl;
+        cout << "buffer[i]: " << (unsigned int) buffer[i] << endl;
 	}
     
     //acknowledge receipt
@@ -224,6 +246,7 @@ void Link_layer::receive_byte(void)
 void Link_layer::resend(void)
 {
 	// coming soon
+    cout << "Resending... " << endl;
 }
 
 // ---------------------------------- Physical Layer loop

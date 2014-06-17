@@ -92,18 +92,18 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
         if(buffer[i] == ESCAPE_BYTE){
             send_buffer[j] = ESCAPE_BYTE;
             send_buffer[j+1] = ESCAPE_BYTE;
-            cout << "output: " << send_buffer[j] << endl;
-            cout << "output: " << send_buffer[j+1] << endl;
+            cout << "output: " << (unsigned int)send_buffer[j] << endl;
+            cout << "output: " << (unsigned int)send_buffer[j+1] << endl;
             j += 2;
         }else if (buffer[i] == FLAG_BYTE){
             send_buffer[j] = ESCAPE_BYTE;
             send_buffer[j+1] = FLAG_BYTE;
-            cout << "output: " << send_buffer[j] << endl;
-            cout << "output: " << send_buffer[j+1] << endl;
+            cout << "output: " << (unsigned int)send_buffer[j] << endl;
+            cout << "output: " << (unsigned int)send_buffer[j+1] << endl;
             j += 2;
         }else{
             send_buffer[j] = buffer[i];
-            cout << "output: " << send_buffer[j] << endl;
+            cout << "output: " << (unsigned int)send_buffer[j] << endl;
             j++;
         }
 	}
@@ -161,7 +161,7 @@ unsigned int Link_layer::receive(unsigned char buffer[])
 	unsigned int n = receive_buffer_length - PACKET_HEADER_LENGTH;
 	for (unsigned int i = 0; i < n; i++) {
 		buffer[i] = receive_buffer[i+PACKET_HEADER_LENGTH];
-        cout << "receive_buffer[i]: " << (unsigned int)receive_buffer[i] << endl;
+        cout << "buffer[i]: " << (unsigned int)buffer[i] << endl;
 	}
     
     //acknowledge receipt
