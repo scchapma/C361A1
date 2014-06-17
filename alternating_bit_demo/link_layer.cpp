@@ -71,6 +71,8 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
     }
     p.checksum = checksum((unsigned short*) &p, PACKET_HEADER_LENGTH + p.length);
     
+    cout << "checksum: " << p.checksum << endl;
+    
     // add packet header - seq, ack, checksum
 
 	send_buffer[0] = FLAG_BYTE; // start flag
@@ -84,13 +86,18 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
         if(buffer[i] == ESCAPE_BYTE){
             send_buffer[j] = ESCAPE_BYTE;
             send_buffer[j+1] = ESCAPE_BYTE;
+            cout << "output: " << send_buffer[j] << endl;
+            cout << "output: " << send_buffer[j+1] << endl;
             j += 2;
         }else if (buffer[i] == FLAG_BYTE){
             send_buffer[j] = ESCAPE_BYTE;
             send_buffer[j+1] = FLAG_BYTE;
+            cout << "output: " << send_buffer[j] << endl;
+            cout << "output: " << send_buffer[j+1] << endl;
             j += 2;
         }else{
             send_buffer[j] = buffer[i];
+            cout << "output: " << send_buffer[j] << endl;
             j++;
         }
 	}
