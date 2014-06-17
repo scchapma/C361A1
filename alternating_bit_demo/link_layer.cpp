@@ -66,8 +66,10 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
     p.seq = 0;
     p.ack = 0;
     p.length = send_buffer_length;
+    cout << "p.length: " << (int)p.length << endl;
     for(int i = 0; i < p.length; i++){
         p.data[i] = send_buffer[i];
+        cout << "p.data: " << p.data[i] << endl;
     }
     p.checksum = checksum((unsigned short*) &p, PACKET_HEADER_LENGTH + p.length);
     
@@ -81,7 +83,11 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
     send_buffer[3] = p.seq;
     send_buffer[4] = p.ack;
     send_buffer[5] = p.length;
-    int j = 1;
+    for(i = 0; i < PACKET_HEADER_LENGTH; i++){
+        cout << "output: " << (int)send_buffer[i+1] << endl;
+    }
+    
+    int j = 1 + PACKET_HEADER_LENGTH;
 	for (i = 0; i < length; i++) {
         if(buffer[i] == ESCAPE_BYTE){
             send_buffer[j] = ESCAPE_BYTE;
