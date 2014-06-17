@@ -60,8 +60,25 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
 
 	unsigned int i;
     struct packet p;
+    unsigned char header[PACKET_HEADER_LENGTH];
+    
+    // prepare packet
+    p.seq = 0;
+    p.ack = 0;
+    p.length = send_buffer_length;
+    for(int i = 0; i < p.length; i++){
+        p.data[i] = send_buffer[i];
+    }
+    p.checksum = checksum((unsigned short*) &p, PACKET_HEADER_LENGTH + p.length);
+    
+    // add packet header - seq, ack, checksum
 
 	send_buffer[0] = FLAG_BYTE; // start flag
+    send_buffer[1] = p.checksum & 0xff; // split checksum bitwise
+    send_buffer[2] = (p.checksum >> 8) & 0xff;
+    send_buffer[3] = p.seq;
+    send_buffer[4] = p.ack;
+    send_buffer[5] = p.length;
     int j = 1;
 	for (i = 0; i < length; i++) {
         if(buffer[i] == ESCAPE_BYTE){
@@ -80,17 +97,6 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
 	send_buffer[j] = FLAG_BYTE; // end flag
 	send_buffer_length = j+1;
 	send_buffer_next = 0;
-    
-    // prepare packet
-    p.seq = 0;
-    p.ack = 1;
-    p.length = send_buffer_length;
-    for(int i = 0; int < p.length; i++){
-        p.data[i] = send_buffer[i];
-    }
-    p.checksum = checksum(&p, PACKET_HEADER_LENGTH + p.length);
-    
-    // add packet header - seq, ack, checksum
 
 	pthread_mutex_unlock(&send_mutex);
 }
@@ -141,6 +147,8 @@ unsigned int Link_layer::receive(unsigned char buffer[])
 	for (unsigned int i = 0; i < n; i++) {
 		buffer[i] = receive_buffer[i];
 	}
+    
+    //acknowledge receipt
 
 	pthread_mutex_unlock(&receive_mutex);
 

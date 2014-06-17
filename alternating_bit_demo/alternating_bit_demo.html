@@ -1,0 +1,45 @@
+<html>
+<head></head>
+<body>
+
+<h2>Alternating bit demo</h2>
+Your code should be able to pass the tests shown below.
+<p>
+Note: the file <tt>checksum_demo.cpp</tt> shows how to
+use the <tt>checksum</tt> function in <tt>link_layer.cpp</tt>.
+
+<h2>Download and check</h2>
+Download the <a href="alternating_bit_demo.zip">Demo code<a>.
+Unpack the code:
+<pre>
+	unzip alternating_bit_demo.zip
+</pre>
+Compile all the code:
+<pre>
+	cd alternating_bit_demo
+	bash make_all.sh
+</pre>
+There should be no compile errors.
+
+<h2>Running the tests</h2>
+
+<dl>
+<dt>Timeout test<dd>
+This test makes a single call to <tt>a_link_layer->send</tt>.
+Then the user is prompted at the keyboard and the program
+waits for a reply.
+Until that reply comes, the a-side link layer should keep timing out
+and resending the original packet.
+Place a <tt>cout</tt> message in the function <tt>resend</tt>
+to show each time the packet is resent.
+<dt>Simple two-way test<dd>
+This test calls <tt>a_link_layer->send</tt> and
+<tt>b_link_layer->send</tt> whenever <tt>receive_ready</tt> returns true.
+Physical layer corruption is set to corrupt every 10th byte
+in the a-to-b direction.
+Your code should overcome the corruption and successfully complete
+every Link Layer send.
+</dl>
+
+</body>
+</html>
