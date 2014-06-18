@@ -30,6 +30,10 @@ Link_layer::Link_layer(Physical_layer_interface* physical_layer_interface,
  unsigned int timeout)
 {
 	this->physical_layer_interface = physical_layer_interface;
+    
+    //convert timeout input (given in microseconds)
+    this->timeout.tv_sec = timeout/1000000;
+    this->timeout.tv_usec = timeout%1000000;
 
 	send_buffer_length = 0;
 	receive_frame_state = OUT;
@@ -111,8 +115,6 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
 	send_buffer[j] = FLAG_BYTE; // end flag
 	send_buffer_length = j+1;
 	send_buffer_next = 0;
-    
-    timeout.tv_sec = 10;
     
     //set time
     gettimeofday(&t0, NULL);
