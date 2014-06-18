@@ -33,6 +33,7 @@ Link_layer::Link_layer(Physical_layer_interface* physical_layer_interface,
 
 	send_buffer_length = 0;
 	receive_frame_state = OUT;
+    sent_state = NOT_SENT;
 
 	pthread_mutex_init(&send_mutex,NULL);
 	pthread_mutex_init(&receive_mutex,NULL);
@@ -111,28 +112,12 @@ void Link_layer::send(unsigned char buffer[],unsigned int length)
 	send_buffer_length = j+1;
 	send_buffer_next = 0;
     
-    timeval t0, t1;
-    timeval timeout;
-    timeout.tv_sec = 3;
+    timeout.tv_sec = 10;
     
     //set time
     gettimeofday(&t0, NULL);
+    sent_state = SENT;
 
-    
-    //if timeout, resend
-    // poll for ack from other link_layer
-    while(p.ack  != (receive_ack-1)/2){
-        cout << "in send - while loop" << endl;
-        // determine time difference
-        gettimeofday(&t1, NULL);
-        cout << "time difference: " << (t1-t0) << endl;
-        if((t1-t0) >= timeout){
-            resend();
-            gettimeofday(&t0, NULL);
-        }else{
-            gettimeofday(&t1, NULL);
-        }
-    }
 	pthread_mutex_unlock(&send_mutex);
 }
 
@@ -246,7 +231,14 @@ void Link_layer::receive_byte(void)
 void Link_layer::resend(void)
 {
 	// coming soon
-    cout << "Resending... " << endl;
+    while(sent_state == SENT){
+        gettimeofday(&t1, NULL);
+        if((t1-t0) >= timeout){
+            cout << "Resending..." << endl;
+            send_buffer_next = 0;
+            gettimeofday(&t0, NULL);
+        }
+    }
 }
 
 // ---------------------------------- Physical Layer loop

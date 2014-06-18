@@ -71,6 +71,8 @@ private:
 	static void* loop(void* link_layer);
 
 	Physical_layer_interface* physical_layer_interface;
+    
+    timeval t0, t1, timeout;
 
 	pthread_t thread;
 
@@ -83,5 +85,8 @@ private:
 	unsigned int receive_buffer_length;
 	unsigned int receive_buffer_ready;
 	unsigned int receive_frame_state;
+    unsigned int sent_state;
+    
+    enum {SENT, NOT_SENT};
 	enum {IN, OUT, ESCAPED, FAIL};
 };
